@@ -1,0 +1,52 @@
+from flask import Flask, render_template, request, redirect, url_for
+import os
+import psycopg2
+
+app = Flask(__name__)
+
+# Database configuration
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# Connect to the PostgreSQL database
+def get_db_connection():
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
+    return conn
+
+# Routes for the e-commerce site
+@app.route('/')
+def index():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM products;')
+    products = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('index.html', products=products)
+
+@app.route('/product/<int:product_id>')
+def product(product_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM products WHERE id = %s;', (product_id,))
+    product = cur.fetchone()
+    cur.close()
+    conn.close()
+    if product is None:
+        return 'Product not found!', 404
+    return render_template('product.html', product=product)
+
+@app.route('/add-to-cart/<int:product_id>', methods=['POST'])
+def add_to_cart(product_id):
+    # Logic to add product to cart (e.g., store it in a session or database)
+    return redirect(url_for('index'))
+
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5000)
