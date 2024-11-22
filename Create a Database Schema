@@ -1,0 +1,12 @@
+psql -h <RDS endpoint> -U <username> -d <database name>
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL NOT NULL,
+    stock_quantity INT
+);
+
+INSERT INTO products (name, description, price, stock_quantity) VALUES
+('Product 1', 'Description of product 1', 10.99, 100),
+('Product 2', 'Description of product 2', 12.49, 50);
