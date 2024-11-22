@@ -1,0 +1,4 @@
+export DB_HOST=<RDS endpoint>
+export DB_NAME=<database name>
+export DB_USER=<database username>
+export DB_PASSWORD=<database password>
